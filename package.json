@@ -6,9 +6,9 @@
   "scripts": {
     "build": "rimraf dist && tsc",
     "preserve": "npm run build",
-    "dev": "cross-env NODE_ENV=development, LOG_LEVEL=silly, KEY_LIFETIME=1000, DEL_RATE_LIMIT=1000, SET_RATE_LIMIT=1000, GET_RATE_LIMIT=1000, REDIS_URL=redis://localhost:6379 && ts-node-dev --respawn ./src/index.ts",
+    "dev": "cross-env NODE_ENV=development LOG_LEVEL=silly KEY_LIFETIME=1000 DEL_RATE_LIMIT=1000 SET_RATE_LIMIT=1000 GET_RATE_LIMIT=1000 REDIS_URL=redis://localhost:6379 ts-node-dev --respawn ./src/index.ts",
     "prestart": "npm run build",
-    "start": "cross-env NODE_ENV=production, LOG_LEVEL=warn, KEY_LIFETIME=5, DEL_RATE_LIMIT=150, SET_RATE_LIMIT=150, GET_RATE_LIMIT=150, REDIS_URL=redis://localhost:6379 node dist/index.js",
+    "start": "cross-env NODE_ENV=production LOG_LEVEL=warn KEY_LIFETIME=5 DEL_RATE_LIMIT=150 SET_RATE_LIMIT=150 GET_RATE_LIMIT=150 REDIS_URL=redis://localhost:6379 node dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "npx eslint . --ext .ts",
     "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write"

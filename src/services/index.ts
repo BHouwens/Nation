@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextFunction, Request, Response } from 'express';
-import { getAddressVersion } from 'zenotta-js';
+import { getAddressVersion } from '@zenotta/zenotta-js';
 import { IS_PRODUCTION, KEY_LIFETIME } from '../constants';
 import { redisClient } from '../db';
 import {
