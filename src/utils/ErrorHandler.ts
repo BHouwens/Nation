@@ -6,7 +6,7 @@ import { IS_PRODUCTION } from '../constants';
 const log = logger(module.filename.split('/').slice(-3).join('/'));
 
 export const notFoundError = () => {
-    throw new HTTP404Error('Method not found.');
+    throw new HTTP404Error();
 };
 
 export const clientError = (err: Error, res: Response, next: NextFunction) => {
@@ -23,8 +23,8 @@ export const clientError = (err: Error, res: Response, next: NextFunction) => {
 export const serverError = (err: Error, res: Response, _next: NextFunction) => {
     if (!IS_PRODUCTION) {
         log.error(err.stack);
-        res.status(500).send('Internal Server Error');
-    } else {
         res.status(500).send(err.message);
+    } else {
+        res.status(500).send('Internal Server Error');
     }
 };

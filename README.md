@@ -1,0 +1,144 @@
+<div id="top"></div>
+
+<!-- PROJECT LOGO -->
+<br />
+
+<div align="center">
+  <a>
+    <img src="https://pbs.twimg.com/profile_images/1398876828295643146/I9HgKjhJ_400x400.jpg" alt="Logo" width="80" height="80">
+  </a>
+
+  <h3 align="center">Zenotta Intercom</h3>
+
+  <p align="center">
+    A small utility server to exchange arbitrary data between clients.
+    <br />
+    <br />
+    <a href="https://zenotta.io"><strong>Official documentation »</strong></a>
+    <br />
+    <br />
+  </p>
+</div>
+
+<!-- TABLE OF CONTENTS -->
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+      <a href="#about-the-project">About The Project</a>
+    </li>
+    <li>
+      <a href="#getting-started">Getting Started</a>
+      <ul>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#running-the-server">Running The Server</a></li>
+        </ul>
+    </li>
+    <li>
+      <a href="#how-it-works">How it Works</a>
+      <ul>
+        <li><a href="#data-exchange">Data Exchange</a></li>
+        <li><a href="#security">Security</a></li>
+        <li><a href="#memory-management">Memory Management</a></li>
+        </ul>
+    </li>
+  </ol>
+</details>
+
+<!-- ABOUT THE PROJECT -->
+## About The Project
+
+This utility server aims to ease the exchange of arbitrary data between clients.
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+<!-- GETTING STARTED -->
+
+## Getting Started
+
+### Prerequisites
+
+For this server to function, a running instance of Redis is required. Download the latest stable release from <a href="https://redis.io/download">Redis.io</a> and follow the installation instructions.
+
+### Running the Server
+To run the server in a development environment, run the following command:
+* `npm`:
+
+```sh
+npm install
+
+npm run dev
+```
+
+* `yarn`:
+
+```sh
+yarn install
+
+yarn run dev
+```
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+## How it Works
+
+*Nomenclature: "Alice" and "Bob" represent unique public key addresses.*
+### Data Exchange
+The server functions on a very basic set of rules. Clients exchange data between each other through the use of public key addresses. If Alice wants to exchange data with Bob, she would place a Redis **field** value containing the data being exchanged under a Redis **key** value representing Bob's public key address. The next time Bob fetches data from the server using his public key address, he would find that Alice has exchanged data to him.
+
+<details>
+<summary> An Example </summary>
+<br/>
+
+```json
+{
+    "c9f97...2d872": {
+        "timestamp": 1647525607766,
+        "value": {
+            "DRUID0x5d382e4ab": {
+                "senderAsset": "Token",
+                "senderAmount": 10,
+                "senderAddress": "bd696...0e80c",
+                "receiverAsset": "Receipt",
+                "receiverAmount": 1,
+                "receiverAddress": "c9f97...2d872",
+                "fromAddr": "bd696...0e80c",
+                "status": "pending"
+            }
+        }
+    }
+}
+```
+
+In this example, data for a receipt-based payment was exchanged to Bob (```bd696...0e80c```) from Alice (```c9f97...2d872```).
+
+Bob would retrieve all data exchanged to him through proving that he owns the address ```bd696...0e80c``` by cryptographically signing for it. This address represents a **key** value on the Redis server.
+
+Retrieval of all **field** values corresponding to the **key** (Bob's address), shows that we obtain an object structure with a parent object key value representing the address (Alice) from which the data is being exchanged. This object also contains a timestamp value to indicate when the data was exchanged.
+
+When Bob responds by exchanging data back to Alice, the data that Alice has initially exchanged to Bob will be removed from the Redis server for sanitation purposes.
+
+</details>
+
+### Security
+
+This server supports basic authentication through the use of cryptographic signatures and also features an IP-based rate-limiting mechanism. Other minor features include request body structure verification, compression middleware, and a request body size limitation.
+
+### Memory Management
+
+Since this server relies on Redis as an in-memory database, it is imperative that Redis entries are discarded when no longer deemed valuable.
+
+The server aims to achieve this through the following:
+<ol>
+<li>
+Redis keys are set to expire after a certain amount of time.
+<li>
+Relevant Redis keys are checked for their expiration each time a request is processed on the server.
+</li>
+<li>
+Data exchange is unidirectional in nature: When Alice exchanges data with Bob, the data Alice has exchanged to Bob will be removed from Bob's Redis **key** entry once Bob responds by exchanging data back to Alice's corresponding address.
+</li>
+<li>
+Data exchange does not allow queuing: Only one set of data may be exchanged from Alice to Bob (or vice versa) at a time. If Alice should exchange different sets of data to Bob in quick succession, only the latest set data will be stored for Bob to retrieve.
+</li>
+</ol>

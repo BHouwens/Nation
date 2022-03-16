@@ -27,8 +27,11 @@ export default class Server {
 
     constructor(private port: string | number) {
         this.app = express();
+        // Apply rate-limiters
         applyMiddleware(commonHandlers, this.app);
+        // Add routes
         applyRoutes(routes, this.app);
+        // Apply error handlers
         applyMiddleware(errorHandlers, this.app);
     }
 

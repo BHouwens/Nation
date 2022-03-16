@@ -17,6 +17,8 @@ import { isOfType, verifySignature } from '../utils';
 import { HTTP400Error, HTTP401Error } from '../utils/httpErrors';
 
 const log = logger(module.filename.split('/').slice(-3).join('/'));
+const SIGNATURE_FAILED = 'Signature validation failed';
+const INVALID_REQUEST_BODY = 'Invalid request body';
 
 const logHttpReq = (req: Request) => {
     log.info(
@@ -47,7 +49,7 @@ export const authenticateSet = (
                     request.field
                 ).isErr()
             )
-                throw new Error('Signature validation failed');
+                throw new Error(SIGNATURE_FAILED);
         }
         next();
     } catch (error) {
@@ -74,7 +76,7 @@ export const authenticateGet = (
                     request.key
                 ).isErr()
             )
-                throw new Error('Signature validation failed');
+                throw new Error(SIGNATURE_FAILED);
         }
         next();
     } catch (error) {
@@ -101,7 +103,7 @@ export const authenticateDel = (
                     request.key
                 ).isErr()
             )
-                throw new Error('Signature validation failed');
+                throw new Error(SIGNATURE_FAILED);
         }
         next();
     } catch (error) {
@@ -118,7 +120,7 @@ export const verifyRequestSetBody = (
     const requestBody = req.body as IRequestSetBody[];
     for (const request of requestBody) {
         if (!isOfType<IRequestSetBody>(request, EMPTY_REQUEST_SET_BODY))
-            throw new HTTP400Error('Invalid request body');
+            throw new HTTP400Error(INVALID_REQUEST_BODY);
     }
     next();
 };
@@ -128,11 +130,11 @@ export const verifyRequestGetBody = (
     _res: Response,
     next: NextFunction
 ) => {
-    if (IS_PRODUCTION) logHttpReq(req);
+    if (!IS_PRODUCTION) logHttpReq(req);
     const requestBody = req.body as IRequestGetBody[];
     for (const request of requestBody) {
         if (!isOfType<IRequestGetBody>(request, EMPTY_REQUEST_GET_BODY))
-            throw new HTTP400Error('Invalid request body');
+            throw new HTTP400Error(INVALID_REQUEST_BODY);
     }
     next();
 };
@@ -141,11 +143,11 @@ export const verifyRequestDelBody = (
     _res: Response,
     next: NextFunction
 ) => {
-    if (IS_PRODUCTION) logHttpReq(req);
+    if (!IS_PRODUCTION) logHttpReq(req);
     const requestBody = req.body as IRequestDelBody[];
     for (const request of requestBody) {
         if (!isOfType<IRequestDelBody>(request, EMPTY_REQUEST_DEL_BODY))
-            throw new HTTP400Error('Invalid request body');
+            throw new HTTP400Error(INVALID_REQUEST_BODY);
     }
     next();
 };
@@ -186,7 +188,10 @@ export const setDb = async (
                 new Date().getDate() + KEY_LIFETIME
             ) /* KEY value will expire KEY_LIFETIME days from now */
         );
-        await redisClient.hDel(request.field, request.key);
+
+        /* Remove this to enable exchanging data from and to the same address */
+        if (request.field !== request.key)
+            await redisClient.hDel(request.field, request.key);
     }
     if (!IS_PRODUCTION) log.info(`Sending response: Ok`);
     res.status(200).send('Ok');
