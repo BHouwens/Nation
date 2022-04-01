@@ -25,6 +25,7 @@ export const serverError = (err: Error, res: Response, _next: NextFunction) => {
         log.error(err.stack);
         res.status(500).send(err.message);
     } else {
+        log.error(err.message);
         res.status(500).send('Internal Server Error');
     }
 };
