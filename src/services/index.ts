@@ -117,6 +117,7 @@ export const verifyRequestSetBody = (
     next: NextFunction
 ) => {
     if (!IS_PRODUCTION) logHttpReq(req);
+    if (!Array.isArray(req.body)) throw new HTTP400Error(INVALID_REQUEST_BODY);
     const requestBody = req.body as IRequestSetBody[];
     for (const request of requestBody) {
         if (!isOfType<IRequestSetBody>(request, EMPTY_REQUEST_SET_BODY))
@@ -131,6 +132,7 @@ export const verifyRequestGetBody = (
     next: NextFunction
 ) => {
     if (!IS_PRODUCTION) logHttpReq(req);
+    if (!Array.isArray(req.body)) throw new HTTP400Error(INVALID_REQUEST_BODY);
     const requestBody = req.body as IRequestGetBody[];
     for (const request of requestBody) {
         if (!isOfType<IRequestGetBody>(request, EMPTY_REQUEST_GET_BODY))
@@ -144,6 +146,7 @@ export const verifyRequestDelBody = (
     next: NextFunction
 ) => {
     if (!IS_PRODUCTION) logHttpReq(req);
+    if (!Array.isArray(req.body)) throw new HTTP400Error(INVALID_REQUEST_BODY);
     const requestBody = req.body as IRequestDelBody[];
     for (const request of requestBody) {
         if (!isOfType<IRequestDelBody>(request, EMPTY_REQUEST_DEL_BODY))

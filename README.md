@@ -48,29 +48,73 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-This utility server aims to ease the exchange of arbitrary data between clients.
+This utility server aims to ease the exchange of arbitrary data between clients. For Zenotta's blockchain, you can use this intercom server in order to facilitate receipt-based transactions between parties.
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+..
 
 <!-- GETTING STARTED -->
 
 ## Getting Started
 
-### Prerequisites
+### 📚 Prerequisites
 
-For this server to function, a running instance of Redis is required. Download the latest stable release from <a href="https://redis.io/download">Redis.io</a> and follow the installation instructions.
+In order to run this server as a community provider, or simply to use it yourself, you'll need to have <a href="https://www.docker.com/products/docker-desktop/">Docker</a> installed (minimum tested v20.10.12) and be comfortable working with the command line. 
 
-### Running the Server
+If you'd like to develop on this repo, you'll have the following additional requirements:
+
+- **NodeJs** (tested at v14.16.0)
+- **Yarn** (tested at v1.22.10)
+
+..
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+..
+
+### 🔧 Installation
+
+With Docker installed and running, you can clone this repo and get everything installed with the following:
+
+```sh
+# SSH clone
+git clone git@gitlab.com:zenotta/zenotta-intercom.git
+
+# Navigate to the repo
+cd zenotta-intercom
+
+# Install dependencies
+npm install
+
+# Bundle server
+npm run build
+
+# Build Docker image
+docker build -t intercom .
+```
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+..
+
+### 🏎️ Running
+
+To use the server as is, you can simply run the following in the root folder of the repo:
+
+```sh
+docker-compose up -d
+```
+
+Docker will orchestrate both the server itself and the Redis instance, after which you can make 
+calls to your server at port **3002**. Data saved to the Redis instance is kept within a Docker volume.
+
 To run the server in a development environment, run the following command:
-* `npm`:
-
 ```sh
 npm install
 
 npm run dev
 ```
 
-* `yarn`:
+or with Yarn:
 
 ```sh
 yarn install
@@ -80,9 +124,12 @@ yarn run dev
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
+..
+
 ## How it Works
 
 *Nomenclature: "Alice" and "Bob" represent unique public key addresses.*
+
 ### Data Exchange
 The server functions on a very basic set of rules. Clients exchange data between each other through the use of public key addresses. If Alice wants to exchange data with Bob, she would place a Redis **field** value containing the data being exchanged under a Redis **key** value representing Bob's public key address. The next time Bob fetches data from the server using his public key address, he would find that Alice has exchanged data to him.
 
@@ -119,6 +166,11 @@ Retrieval of all **field** values corresponding to the **key** (Bob's address), 
 When Bob responds by exchanging data back to Alice, the data that Alice has initially exchanged to Bob will be removed from the Redis server for sanitation purposes.
 
 </details>
+
+### Available Routes
+
+- `set_data`: Sets data in the Redis instance and marks it for pending retrieval in the server
+- `get_data`: Gets pending data from the server
 
 ### Security
 
