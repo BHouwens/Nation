@@ -104,6 +104,14 @@ To use the server as is, you can simply run the following in the root folder of 
 docker-compose up -d
 ```
 
+or, if you are able to run bash scripts:
+
+```sh
+cd zenotta-intercom
+
+sh build.sh
+```
+
 Docker will orchestrate both the server itself and the Redis instance, after which you can make 
 calls to your server at port **3002**. Data saved to the Redis instance is kept within a Docker volume.
 

@@ -1,16 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextFunction, Request, Response } from 'express';
-import { getAddressVersion } from '@zenotta/zenotta-js';
+import {
+    getAddressVersion,
+    IRedisFieldEntry,
+    IRequestDelBody,
+    IRequestGetBody,
+    IRequestSetBody
+} from '@zenotta/zenotta-js';
 import { IS_PRODUCTION, KEY_LIFETIME } from '../constants';
 import { redisClient } from '../db';
 import {
     EMPTY_REQUEST_DEL_BODY,
     EMPTY_REQUEST_GET_BODY,
-    EMPTY_REQUEST_SET_BODY,
-    IRedisFieldEntry,
-    IRequestDelBody,
-    IRequestGetBody,
-    IRequestSetBody
+    EMPTY_REQUEST_SET_BODY
 } from '../interfaces';
 import logger from '../logger';
 import { isOfType, verifySignature } from '../utils';
@@ -35,7 +37,7 @@ export const authenticateSet = (
     _res: Response,
     next: NextFunction
 ) => {
-    const requestBody = req.body as IRequestSetBody[];
+    const requestBody = req.body as IRequestSetBody<object>[];
     try {
         for (const request of requestBody) {
             if (
@@ -118,9 +120,9 @@ export const verifyRequestSetBody = (
 ) => {
     if (!IS_PRODUCTION) logHttpReq(req);
     if (!Array.isArray(req.body)) throw new HTTP400Error(INVALID_REQUEST_BODY);
-    const requestBody = req.body as IRequestSetBody[];
+    const requestBody = req.body as IRequestSetBody<object>[];
     for (const request of requestBody) {
-        if (!isOfType<IRequestSetBody>(request, EMPTY_REQUEST_SET_BODY))
+        if (!isOfType<IRequestSetBody<object>>(request, EMPTY_REQUEST_SET_BODY))
             throw new HTTP400Error(INVALID_REQUEST_BODY);
     }
     next();
@@ -162,11 +164,13 @@ export const setDb = async (
 ) => {
     // First, we delete FIELD entries older than KEY_LIFETIME days
     // TODO: Convert to unix timestamp?
-    const reqBody = req.body as IRequestSetBody[];
+    const reqBody = req.body as IRequestSetBody<object>[];
     for (const request of reqBody) {
         Object.entries(await redisClient.hGetAll(request.key)).forEach(
             async ([field, value]) => {
-                const parsedField = JSON.parse(value) as IRedisFieldEntry;
+                const parsedField = JSON.parse(
+                    value
+                ) as IRedisFieldEntry<object>;
                 if (
                     (new Date().getTime() -
                         new Date(parsedField.timestamp).getTime()) /
@@ -183,7 +187,7 @@ export const setDb = async (
             JSON.stringify({
                 timestamp: new Date().getTime(),
                 value: request.value
-            } as IRedisFieldEntry)
+            } as IRedisFieldEntry<object>)
         );
         await redisClient.expireAt(
             request.key,
@@ -212,7 +216,9 @@ export const getDb = async (
     for (const request of reqBody) {
         Object.entries(await redisClient.hGetAll(request.key)).forEach(
             async ([field, value]) => {
-                const parsedField = JSON.parse(value) as IRedisFieldEntry;
+                const parsedField = JSON.parse(
+                    value
+                ) as IRedisFieldEntry<object>;
                 if (
                     (new Date().getTime() -
                         new Date(parsedField.timestamp).getTime()) /
@@ -225,9 +231,9 @@ export const getDb = async (
         );
         data = { ...data, ...(await redisClient.hGetAll(request.key)) };
     }
-    const parsedData: { [key: string]: IRedisFieldEntry } = {};
+    const parsedData: { [key: string]: IRedisFieldEntry<object> } = {};
     Object.entries(data).forEach(([key, value]) => {
-        parsedData[key] = JSON.parse(value) as IRedisFieldEntry;
+        parsedData[key] = JSON.parse(value) as IRedisFieldEntry<object>;
     });
     if (!IS_PRODUCTION) log.info(`Sending response: ${JSON.stringify(data)}`);
     res.status(200).send(parsedData);
@@ -244,7 +250,9 @@ export const delDB = async (
     for (const request of reqBody) {
         Object.entries(await redisClient.hGetAll(request.key)).forEach(
             async ([field, value]) => {
-                const parsedField = JSON.parse(value) as IRedisFieldEntry;
+                const parsedField = JSON.parse(
+                    value
+                ) as IRedisFieldEntry<object>;
                 if (
                     (new Date().getTime() -
                         new Date(parsedField.timestamp).getTime()) /
