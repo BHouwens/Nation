@@ -5,7 +5,9 @@ import logger from '../logger';
 import { IS_PRODUCTION } from '../constants';
 import createHttpError from 'http-errors';
 
-const log = logger(module.filename.split('/').slice(-3).join('/'));
+const log = IS_PRODUCTION
+    ? logger()
+    : logger(module.filename.split('/').slice(-3).join('/'));
 
 export const serverError = (
     err: Error | SyntaxError | createHttpError.HttpError,

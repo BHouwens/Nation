@@ -2,9 +2,11 @@
 import { createClient } from 'redis';
 import dotenv from 'dotenv';
 import logger from '../logger';
-import { REDIS_URL } from '../constants';
+import { IS_PRODUCTION, REDIS_URL } from '../constants';
 
-const log = logger(module.filename.split('/').slice(-3).join('/'));
+const log = IS_PRODUCTION
+    ? logger()
+    : logger(module.filename.split('/').slice(-3).join('/'));
 
 dotenv.config();
 

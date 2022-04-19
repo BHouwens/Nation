@@ -109,7 +109,7 @@ or, if you are able to run bash scripts:
 ```sh
 cd zenotta-intercom
 
-sh build.sh
+sh exec_docker.sh
 ```
 
 Docker will orchestrate both the server itself and the Redis instance, after which you can make 

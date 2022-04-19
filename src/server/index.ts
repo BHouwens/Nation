@@ -4,8 +4,11 @@ import { applyMiddleware, applyRoutes } from '../utils';
 import commonHandlers from '../middleware/common';
 import errorHandlers from '../middleware/errorHandlers';
 import routes from '../services/routes';
+import { IS_PRODUCTION } from '../constants';
 
-const log = logger(module.filename.split('/').slice(-3).join('/'));
+const log = IS_PRODUCTION
+    ? logger()
+    : logger(module.filename.split('/').slice(-3).join('/'));
 
 /* -------------------------------------------------------------------------- */
 /*                                Server Module                               */
