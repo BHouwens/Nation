@@ -2,9 +2,11 @@ import dotenv from 'dotenv';
 import logger from './logger';
 import { init as initRedis } from './db';
 import Server from './server';
-import { ALL_CONSTS, SERVER_PORT } from './constants';
+import { ALL_CONSTS, SERVER_PORT, IS_PRODUCTION } from './constants';
 
-const log = logger(module.filename.split('/').slice(-2).join('/'));
+const log = IS_PRODUCTION
+    ? logger()
+    : logger(module.filename.split('/').slice(-2).join('/'));
 
 // Handle runtime exceptions
 process.on('uncaughtException', (e) => {

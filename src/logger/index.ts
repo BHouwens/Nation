@@ -11,9 +11,11 @@ const logger: winston.Logger = winston.createLogger({
         winston.format.timestamp(),
         winston.format.colorize(),
         winston.format.json(),
-        winston.format.printf(({ module, timestamp, level, message }) => {
-            return `[${module}] ${timestamp} [${level}]: ${message}`;
-        })
+        winston.format.printf(({ module, timestamp, level, message }) =>
+            module
+                ? `[${module}] ${timestamp} [${level}]: ${message}`
+                : `${timestamp} [${level}]: ${message}`
+        )
     ),
     transports: [
         new transports.Console(),
@@ -26,6 +28,6 @@ const logger: winston.Logger = winston.createLogger({
     ]
 });
 
-export default function (name: string) {
-    return logger.child({ module: name });
+export default function (module?: string) {
+    return logger.child({ module });
 }

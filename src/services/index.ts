@@ -18,7 +18,10 @@ import logger from '../logger';
 import { isOfType, verifySignature } from '../utils';
 import createHttpError from 'http-errors';
 
-const log = logger(module.filename.split('/').slice(-3).join('/'));
+const log = IS_PRODUCTION
+    ? logger()
+    : logger(module.filename.split('/').slice(-3).join('/'));
+
 const SIGNATURE_FAILED = 'Signature validation failed';
 const INVALID_REQUEST_BODY = 'Invalid request body';
 
