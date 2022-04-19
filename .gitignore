@@ -3,3 +3,5 @@ dist
 .env
 .vscode
 .yalc
+*.log
+/yarn.lock
