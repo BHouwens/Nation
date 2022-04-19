@@ -12,9 +12,15 @@ import {
 
 const handleCommon = (router: Router) => {
     router.use(cors());
-    // TODO: What is a reasonable size for a request body limit?
-    router.use(express.json({ limit: BODY_LIMIT }) as RequestHandler);
-    router.use(express.urlencoded({ extended: true }) as RequestHandler);
+    router.use(
+        express.json({ limit: BODY_LIMIT, strict: true }) as RequestHandler
+    );
+    router.use(
+        express.urlencoded({
+            limit: BODY_LIMIT,
+            extended: true
+        }) as RequestHandler
+    );
     router.use(compression());
 };
 

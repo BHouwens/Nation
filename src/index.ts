@@ -6,6 +6,17 @@ import { ALL_CONSTS, SERVER_PORT } from './constants';
 
 const log = logger(module.filename.split('/').slice(-2).join('/'));
 
+// Handle runtime exceptions
+process.on('uncaughtException', (e) => {
+    log.error(`uncaughtException: ${e.message}`);
+    process.exit(1);
+});
+
+process.on('unhandledRejection', (e) => {
+    log.error(`unhandledRejection: ${e}`);
+    process.exit(1);
+});
+
 /* -------------------------------------------------------------------------- */
 /*                          Program Main Entry Point                          */
 /* -------------------------------------------------------------------------- */
@@ -18,7 +29,7 @@ log.info('Program entry point');
 
 // Log Startup Settings
 for (const key in ALL_CONSTS) {
-    log.info(`${key} : ${ALL_CONSTS[key]}`);
+    log.debug(`${key} : ${ALL_CONSTS[key]}`);
 }
 
 // Initialize Redis client

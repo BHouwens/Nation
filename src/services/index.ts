@@ -16,7 +16,7 @@ import {
 } from '../interfaces';
 import logger from '../logger';
 import { isOfType, verifySignature } from '../utils';
-import { HTTP400Error, HTTP401Error } from '../utils/httpErrors';
+import createHttpError from 'http-errors';
 
 const log = logger(module.filename.split('/').slice(-3).join('/'));
 const SIGNATURE_FAILED = 'Signature validation failed';
@@ -28,7 +28,7 @@ const logHttpReq = (req: Request) => {
             req.headers
         )}\n Body: ${JSON.stringify(req.body)}\n Query: ${JSON.stringify(
             req.query
-        )}\n Params: ${JSON.stringify(req.params)}`
+        )}\n Params: ${JSON.stringify(req.params)}\n URL: ${req.originalUrl}`
     );
 };
 
@@ -51,11 +51,11 @@ export const authenticateSet = (
                     request.field
                 ).isErr()
             )
-                throw new Error(SIGNATURE_FAILED);
+                return next(createHttpError(401, SIGNATURE_FAILED));
         }
         next();
     } catch (error) {
-        throw new HTTP401Error(`${error}`);
+        return next(createHttpError(400, INVALID_REQUEST_BODY));
     }
 };
 
@@ -78,11 +78,11 @@ export const authenticateGet = (
                     request.key
                 ).isErr()
             )
-                throw new Error(SIGNATURE_FAILED);
+                return next(createHttpError(401, SIGNATURE_FAILED));
         }
         next();
     } catch (error) {
-        throw new HTTP401Error(`${error}`);
+        return next(createHttpError(400, INVALID_REQUEST_BODY));
     }
 };
 
@@ -105,11 +105,11 @@ export const authenticateDel = (
                     request.key
                 ).isErr()
             )
-                throw new Error(SIGNATURE_FAILED);
+                return next(createHttpError(401, SIGNATURE_FAILED));
         }
         next();
     } catch (error) {
-        throw new HTTP401Error(`${error}`);
+        return next(createHttpError(400, INVALID_REQUEST_BODY));
     }
 };
 
@@ -119,11 +119,12 @@ export const verifyRequestSetBody = (
     next: NextFunction
 ) => {
     if (!IS_PRODUCTION) logHttpReq(req);
-    if (!Array.isArray(req.body)) throw new HTTP400Error(INVALID_REQUEST_BODY);
+    if (!Array.isArray(req.body))
+        return next(createHttpError(400, INVALID_REQUEST_BODY));
     const requestBody = req.body as IRequestSetBody<object>[];
     for (const request of requestBody) {
         if (!isOfType<IRequestSetBody<object>>(request, EMPTY_REQUEST_SET_BODY))
-            throw new HTTP400Error(INVALID_REQUEST_BODY);
+            return next(createHttpError(400, INVALID_REQUEST_BODY));
     }
     next();
 };
@@ -134,25 +135,28 @@ export const verifyRequestGetBody = (
     next: NextFunction
 ) => {
     if (!IS_PRODUCTION) logHttpReq(req);
-    if (!Array.isArray(req.body)) throw new HTTP400Error(INVALID_REQUEST_BODY);
+    if (!Array.isArray(req.body))
+        return next(createHttpError(400, INVALID_REQUEST_BODY));
     const requestBody = req.body as IRequestGetBody[];
     for (const request of requestBody) {
         if (!isOfType<IRequestGetBody>(request, EMPTY_REQUEST_GET_BODY))
-            throw new HTTP400Error(INVALID_REQUEST_BODY);
+            return next(createHttpError(400, INVALID_REQUEST_BODY));
     }
     next();
 };
+
 export const verifyRequestDelBody = (
     req: Request,
     _res: Response,
     next: NextFunction
 ) => {
     if (!IS_PRODUCTION) logHttpReq(req);
-    if (!Array.isArray(req.body)) throw new HTTP400Error(INVALID_REQUEST_BODY);
+    if (!Array.isArray(req.body))
+        return next(createHttpError(400, INVALID_REQUEST_BODY));
     const requestBody = req.body as IRequestDelBody[];
     for (const request of requestBody) {
         if (!isOfType<IRequestDelBody>(request, EMPTY_REQUEST_DEL_BODY))
-            throw new HTTP400Error(INVALID_REQUEST_BODY);
+            return next(createHttpError(400, INVALID_REQUEST_BODY));
     }
     next();
 };
@@ -200,7 +204,7 @@ export const setDb = async (
         if (request.field !== request.key)
             await redisClient.hDel(request.field, request.key);
     }
-    if (!IS_PRODUCTION) log.info(`Sending response: Ok`);
+    log.info(`Sending response: Ok`);
     res.status(200).send('Ok');
 };
 
@@ -235,7 +239,7 @@ export const getDb = async (
     Object.entries(data).forEach(([key, value]) => {
         parsedData[key] = JSON.parse(value) as IRedisFieldEntry<object>;
     });
-    if (!IS_PRODUCTION) log.info(`Sending response: ${JSON.stringify(data)}`);
+    log.info(`Sending response: ${JSON.stringify(data)}`);
     res.status(200).send(parsedData);
 };
 
@@ -265,6 +269,6 @@ export const delDB = async (
         );
         await redisClient.hDel(request.key as string, request.field as string);
     }
-    if (!IS_PRODUCTION) log.info(`Sending response: Ok`);
+    log.info(`Sending response: Ok`);
     res.status(200).send('Ok');
 };

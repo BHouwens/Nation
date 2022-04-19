@@ -24,7 +24,7 @@ services:
             # Log Level
             - LOG_LEVEL=warn
             # Request body size limit (as a string)
-            - BODY_LIMIT=50kb
+            - BODY_LIMIT=2kb
             # Request window in minutes
             - REQUEST_WINDOW=15
             # Number of days for a Redis key entry to expire
