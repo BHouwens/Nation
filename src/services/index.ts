@@ -3,9 +3,9 @@ import { NextFunction, Request, Response } from 'express';
 import {
     getAddressVersion,
     IRedisFieldEntry,
-    IRequestDelBody,
-    IRequestGetBody,
-    IRequestSetBody
+    IRequestIntercomDelBody,
+    IRequestIntercomGetBody,
+    IRequestIntercomSetBody
 } from '@zenotta/zenotta-js';
 import { IS_PRODUCTION, KEY_LIFETIME } from '../constants';
 import { redisClient } from '../db';
@@ -40,7 +40,7 @@ export const authenticateSet = (
     _res: Response,
     next: NextFunction
 ) => {
-    const requestBody = req.body as IRequestSetBody<object>[];
+    const requestBody = req.body as IRequestIntercomSetBody<object>[];
     try {
         for (const request of requestBody) {
             if (
@@ -67,7 +67,7 @@ export const authenticateGet = (
     _res: Response,
     next: NextFunction
 ) => {
-    const requestBody = req.body as IRequestGetBody[];
+    const requestBody = req.body as IRequestIntercomGetBody[];
     try {
         for (const request of requestBody) {
             if (
@@ -94,7 +94,7 @@ export const authenticateDel = (
     _res: Response,
     next: NextFunction
 ) => {
-    const requestBody = req.body as IRequestDelBody[];
+    const requestBody = req.body as IRequestIntercomDelBody[];
     try {
         for (const request of requestBody) {
             if (
@@ -124,9 +124,14 @@ export const verifyRequestSetBody = (
     if (!IS_PRODUCTION) logHttpReq(req);
     if (!Array.isArray(req.body))
         return next(createHttpError(400, INVALID_REQUEST_BODY));
-    const requestBody = req.body as IRequestSetBody<object>[];
+    const requestBody = req.body as IRequestIntercomSetBody<object>[];
     for (const request of requestBody) {
-        if (!isOfType<IRequestSetBody<object>>(request, EMPTY_REQUEST_SET_BODY))
+        if (
+            !isOfType<IRequestIntercomSetBody<object>>(
+                request,
+                EMPTY_REQUEST_SET_BODY
+            )
+        )
             return next(createHttpError(400, INVALID_REQUEST_BODY));
     }
     next();
@@ -140,9 +145,9 @@ export const verifyRequestGetBody = (
     if (!IS_PRODUCTION) logHttpReq(req);
     if (!Array.isArray(req.body))
         return next(createHttpError(400, INVALID_REQUEST_BODY));
-    const requestBody = req.body as IRequestGetBody[];
+    const requestBody = req.body as IRequestIntercomGetBody[];
     for (const request of requestBody) {
-        if (!isOfType<IRequestGetBody>(request, EMPTY_REQUEST_GET_BODY))
+        if (!isOfType<IRequestIntercomGetBody>(request, EMPTY_REQUEST_GET_BODY))
             return next(createHttpError(400, INVALID_REQUEST_BODY));
     }
     next();
@@ -156,9 +161,9 @@ export const verifyRequestDelBody = (
     if (!IS_PRODUCTION) logHttpReq(req);
     if (!Array.isArray(req.body))
         return next(createHttpError(400, INVALID_REQUEST_BODY));
-    const requestBody = req.body as IRequestDelBody[];
+    const requestBody = req.body as IRequestIntercomDelBody[];
     for (const request of requestBody) {
-        if (!isOfType<IRequestDelBody>(request, EMPTY_REQUEST_DEL_BODY))
+        if (!isOfType<IRequestIntercomDelBody>(request, EMPTY_REQUEST_DEL_BODY))
             return next(createHttpError(400, INVALID_REQUEST_BODY));
     }
     next();
@@ -171,7 +176,7 @@ export const setDb = async (
 ) => {
     // First, we delete FIELD entries older than KEY_LIFETIME days
     // TODO: Convert to unix timestamp?
-    const reqBody = req.body as IRequestSetBody<object>[];
+    const reqBody = req.body as IRequestIntercomSetBody<object>[];
     for (const request of reqBody) {
         Object.entries(await redisClient.hGetAll(request.key)).forEach(
             async ([field, value]) => {
@@ -216,7 +221,7 @@ export const getDb = async (
     res: Response,
     _next: NextFunction
 ) => {
-    const reqBody = req.body as IRequestGetBody[];
+    const reqBody = req.body as IRequestIntercomGetBody[];
     let data: { [key: string]: string } = {};
     // First, we delete FIELD entries older than KEY_LIFETIME days
     // TODO: Convert to unix timestamp?
@@ -251,7 +256,7 @@ export const delDB = async (
     res: Response,
     _next: NextFunction
 ) => {
-    const reqBody = req.body as IRequestDelBody[];
+    const reqBody = req.body as IRequestIntercomDelBody[];
     // First, we delete FIELD entries older than KEY_LIFETIME days
     // TODO: Convert to unix timestamp?
     for (const request of reqBody) {
