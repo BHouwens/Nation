@@ -1,9 +1,0 @@
-{
-  "version": "v1",
-  "packages": {
-    "zenotta-js": {
-      "signature": "d69efac136ee32b1cbfe4820bd56e902",
-      "file": true
-    }
-  }
-}

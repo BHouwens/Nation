@@ -1,17 +1,17 @@
 import {
-    IRequestGetBody,
-    IRequestSetBody,
-    IRequestDelBody
+    IRequestIntercomGetBody,
+    IRequestIntercomSetBody,
+    IRequestIntercomDelBody
 } from '@zenotta/zenotta-js';
 import { Request, Response, NextFunction } from 'express';
 
-export const EMPTY_REQUEST_GET_BODY: IRequestGetBody = {
+export const EMPTY_REQUEST_GET_BODY: IRequestIntercomGetBody = {
     key: '',
     publicKey: '',
     signature: ''
 };
 
-export const EMPTY_REQUEST_SET_BODY: IRequestSetBody<object> = {
+export const EMPTY_REQUEST_SET_BODY: IRequestIntercomSetBody<object> = {
     key: '',
     field: '',
     publicKey: '',
@@ -19,7 +19,7 @@ export const EMPTY_REQUEST_SET_BODY: IRequestSetBody<object> = {
     value: {}
 };
 
-export const EMPTY_REQUEST_DEL_BODY: IRequestDelBody = {
+export const EMPTY_REQUEST_DEL_BODY: IRequestIntercomDelBody = {
     key: '',
     field: '',
     publicKey: '',
