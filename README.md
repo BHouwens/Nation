@@ -12,10 +12,14 @@
 
   <h3>Zenotta Intercom</h3>
 
-  <div><img src="https://img.shields.io/github/workflow/status/Zenotta/Intercom/Node.js%20CI%20on%20Ubuntu" alt="Pipeline Status" /></div>
+  <div>
+  <img src="https://img.shields.io/github/workflow/status/Zenotta/Intercom/Node.js%20CI%20on%20Ubuntu" alt="Pipeline Status" />
+    <img src="
+  https://img.shields.io/github/package-json/v/Zenotta/Intercom" />
+  </div>
 
   <p align="center">
-    A small utility server to exchange arbitrary data between clients.
+    A small utility server to exchange arbitrary data between clients. Comes complete with E2E public key encryption
     <br />
     <br />
     <a href="https://zenotta.io"><strong>Official documentation »</strong></a>
