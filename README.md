@@ -8,6 +8,10 @@
     <img src="https://github.com/Zenotta/Intercom/blob/main/assets/hero.svg" alt="Logo" width="450px">
   </a>
 
+  <div style="height: 20px; width: 100%"></div>
+
+  <h3>Zenotta Intercom</h3>
+
   <p align="center">
     A small utility server to exchange arbitrary data between clients.
     <br />
@@ -65,7 +69,7 @@ If you'd like to develop on this repo, you'll have the following additional requ
 
 ..
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+<p align="left">(<a href="#top">back to top</a>)</p>
 
 ..
 
@@ -90,7 +94,7 @@ npm run build
 docker build -t intercom .
 ```
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+<p align="left">(<a href="#top">back to top</a>)</p>
 
 ..
 
@@ -128,7 +132,7 @@ yarn install
 yarn run dev
 ```
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+<p align="left">(<a href="#top">back to top</a>)</p>
 
 ..
 
