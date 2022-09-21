@@ -8,8 +8,6 @@
     <img src="https://github.com/Zenotta/Intercom/blob/main/assets/hero.svg" alt="Logo" width="450px">
   </a>
 
-  <h3 align="center">Zenotta Intercom</h3>
-
   <p align="center">
     A small utility server to exchange arbitrary data between clients.
     <br />
