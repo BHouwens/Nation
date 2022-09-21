@@ -14,8 +14,7 @@
 
   <div>
   <img src="https://img.shields.io/github/workflow/status/Zenotta/Intercom/Node.js%20CI%20on%20Ubuntu" alt="Pipeline Status" />
-    <img src="
-  https://img.shields.io/github/package-json/v/Zenotta/Intercom" />
+    <img src="https://img.shields.io/github/package-json/v/Zenotta/Intercom" />
   </div>
 
   <p align="center">
