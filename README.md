@@ -12,6 +12,8 @@
 
   <h3>Zenotta Intercom</h3>
 
+  <div><img src="https://img.shields.io/github/workflow/status/Zenotta/Intercom/Node.js%20CI%20on%20Ubuntu" alt="Pipeline Status" /></div>
+
   <p align="center">
     A small utility server to exchange arbitrary data between clients.
     <br />
