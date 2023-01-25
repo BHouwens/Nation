@@ -7,6 +7,8 @@ export const SERVER_PORT = Number(process.env.SERVER_PORT) || 3002;
 export const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 export const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
 export const BODY_LIMIT = process.env.BODY_LIMIT || '50kb';
+export const LOG_DIR = process.env.LOG_DIR || '/logs';
+export const LOG_FORMAT = process.env.LOG_FORMAT || 'combined';
 
 export const ALL_CONSTS: { [key: string]: string | number | boolean } = {
     REQUEST_WINDOW: REQUEST_WINDOW,
@@ -17,5 +19,7 @@ export const ALL_CONSTS: { [key: string]: string | number | boolean } = {
     SERVER_PORT: SERVER_PORT,
     IS_PRODUCTION: IS_PRODUCTION,
     REDIS_URL: REDIS_URL,
-    BODY_LIMIT: BODY_LIMIT
+    BODY_LIMIT: BODY_LIMIT,
+    LOG_DIR: LOG_DIR,
+    LOG_FORMAT: LOG_FORMAT
 };

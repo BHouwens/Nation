@@ -2,15 +2,19 @@ import compression from 'compression';
 import express, { RequestHandler, Router } from 'express';
 import rateLimit from 'express-rate-limit';
 import cors from 'cors';
+import morgan from 'morgan';
 import {
     BODY_LIMIT,
     DEL_RATE_LIMIT,
     GET_RATE_LIMIT,
+    LOG_FORMAT,
     REQUEST_WINDOW,
     SET_RATE_LIMIT
 } from '../constants';
+import { stream } from '../logger';
 
 const handleCommon = (router: Router) => {
+    router.use(morgan(LOG_FORMAT, { stream }));
     router.use(cors());
     router.use(
         express.json({ limit: BODY_LIMIT, strict: true }) as RequestHandler

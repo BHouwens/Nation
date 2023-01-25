@@ -1,14 +1,9 @@
 import express from 'express';
-import logger from '../logger';
+import { logger } from '../logger';
 import { applyMiddleware, applyRoutes } from '../utils';
 import commonHandlers from '../middleware/common';
 import errorHandlers from '../middleware/errorHandlers';
 import routes from '../services/routes';
-import { IS_PRODUCTION } from '../constants';
-
-const log = IS_PRODUCTION
-    ? logger()
-    : logger(module.filename.split('/').slice(-3).join('/'));
 
 /* -------------------------------------------------------------------------- */
 /*                                Server Module                               */
@@ -34,8 +29,10 @@ export default class Server {
     public listen(): void {
         this.app
             .listen(this.port, () => {
-                log.debug(`Server running on port ${this.port} ⚡`);
+                logger.debug(`Server running on port ${this.port} ⚡`);
             })
-            .on('error', (err) => log.error(`Error starting server: ${err}`));
+            .on('error', (err) =>
+                logger.error(`Error starting server: ${err}`)
+            );
     }
 }

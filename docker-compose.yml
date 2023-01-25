@@ -18,6 +18,8 @@ services:
             - 3002
         depends_on:
             - cache
+        volumes:
+            - ${PWD}/logs:/app/logs
         environment:
             # Develop or Production
             - NODE_ENV=production
@@ -39,6 +41,10 @@ services:
             - REDIS_URL=redis://cache:6379
             # Server Port
             - SERVER_PORT=3002
+            # Directory for logs
+            - LOG_DIR=/logs
+            # Log format
+            - LOG_FORMAT=combined
         container_name: intercom-server
 volumes:
     cache:

@@ -14,19 +14,15 @@ import {
     EMPTY_REQUEST_GET_BODY,
     EMPTY_REQUEST_SET_BODY
 } from '../interfaces';
-import logger from '../logger';
+import { logger } from '../logger';
 import { isOfType, verifySignature } from '../utils';
 import createHttpError from 'http-errors';
-
-const log = IS_PRODUCTION
-    ? logger()
-    : logger(module.filename.split('/').slice(-3).join('/'));
 
 const SIGNATURE_FAILED = 'Signature validation failed';
 const INVALID_REQUEST_BODY = 'Invalid request body';
 
 const logHttpReq = (req: Request) => {
-    log.info(
+    logger.info(
         `POST req from ${req.ip}\n Headers: ${JSON.stringify(
             req.headers
         )}\n Body: ${JSON.stringify(req.body)}\n Query: ${JSON.stringify(
@@ -186,7 +182,7 @@ export const setDb = async (
                 if (
                     (new Date().getTime() -
                         new Date(parsedField.timestamp).getTime()) /
-                        (1000 * 3600 * 24) >
+                    (1000 * 3600 * 24) >
                     KEY_LIFETIME
                 ) {
                     await redisClient.hDel(request.key, field);
@@ -212,7 +208,7 @@ export const setDb = async (
         if (request.field !== request.key)
             await redisClient.hDel(request.field, request.key);
     }
-    log.info(`Sending response: Ok`);
+    logger.info(`Sending response: Ok`);
     res.status(200).send('Ok');
 };
 
@@ -234,7 +230,7 @@ export const getDb = async (
                 if (
                     (new Date().getTime() -
                         new Date(parsedField.timestamp).getTime()) /
-                        (1000 * 3600 * 24) >
+                    (1000 * 3600 * 24) >
                     KEY_LIFETIME
                 ) {
                     await redisClient.hDel(request.key, field);
@@ -247,7 +243,7 @@ export const getDb = async (
     Object.entries(data).forEach(([key, value]) => {
         parsedData[key] = JSON.parse(value) as IRedisFieldEntry<object>;
     });
-    log.info(`Sending response: ${JSON.stringify(data)}`);
+    logger.info(`Sending response: ${JSON.stringify(data)}`);
     res.status(200).send(parsedData);
 };
 
@@ -268,7 +264,7 @@ export const delDB = async (
                 if (
                     (new Date().getTime() -
                         new Date(parsedField.timestamp).getTime()) /
-                        (1000 * 3600 * 24) >
+                    (1000 * 3600 * 24) >
                     KEY_LIFETIME
                 ) {
                     await redisClient.hDel(request.key, field);
@@ -277,6 +273,6 @@ export const delDB = async (
         );
         await redisClient.hDel(request.key as string, request.field as string);
     }
-    log.info(`Sending response: Ok`);
+    logger.info(`Sending response: Ok`);
     res.status(200).send('Ok');
 };

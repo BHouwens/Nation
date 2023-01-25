@@ -1,21 +1,17 @@
 import dotenv from 'dotenv';
-import logger from './logger';
+import { logger } from './logger';
 import { init as initRedis } from './db';
 import Server from './server';
-import { ALL_CONSTS, SERVER_PORT, IS_PRODUCTION } from './constants';
-
-const log = IS_PRODUCTION
-    ? logger()
-    : logger(module.filename.split('/').slice(-2).join('/'));
+import { ALL_CONSTS, SERVER_PORT } from './constants';
 
 // Handle runtime exceptions
 process.on('uncaughtException', (e) => {
-    log.error(`uncaughtException: ${e.message}`);
+    logger.error(`uncaughtException: ${e.message}`);
     process.exit(1);
 });
 
 process.on('unhandledRejection', (e) => {
-    log.error(`unhandledRejection: ${e}`);
+    logger.error(`unhandledRejection: ${e}`);
     process.exit(1);
 });
 
@@ -27,15 +23,17 @@ process.on('unhandledRejection', (e) => {
 dotenv.config();
 
 // Log program entry point
-log.info('Program entry point');
+logger.info('Program entry point');
 
 // Log Startup Settings
 for (const key in ALL_CONSTS) {
-    log.debug(`${key} : ${ALL_CONSTS[key]}`);
+    logger.debug(`${key} : ${ALL_CONSTS[key]}`);
 }
 
 // Initialize Redis client
-Promise.resolve(initRedis());
+Promise.resolve(initRedis()).then(() => {
+    logger.info('Redis initialisation');
+});
 
 // Create the server
 const ExpressServer: Server = new Server(SERVER_PORT);
