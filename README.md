@@ -13,7 +13,7 @@
   <h3>Zenotta Intercom</h3>
 
   <div>
-  <img src="https://img.shields.io/github/workflow/status/Zenotta/Intercom/Node.js%20CI%20on%20Ubuntu" alt="Pipeline Status" />
+  <img src="https://img.shields.io/github/actions/workflow/status/Zenotta/Intercom/codeql-analysis.yml?branch=main" alt="Pipeline Status" />
     <img src="https://img.shields.io/github/package-json/v/Zenotta/Intercom" />
   </div>
 
