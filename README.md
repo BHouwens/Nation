@@ -5,15 +5,15 @@
 
 <div align="center">
   <a>
-    <img src="https://github.com/Zenotta/Intercom/blob/main/assets/hero.svg" alt="Logo" width="450px">
+    <img src="https://github.com/BHouwens/Nation/blob/main/assets/hero.svg" alt="Logo" width="250px">
   </a>
 
   <div style="height: 20px; width: 100%"></div>
 
-  <h3>Zenotta Intercom</h3>
+  <h3>Nation Voting Server</h3>
 
   <div>
-  <img src="https://img.shields.io/github/actions/workflow/status/Zenotta/Intercom/codeql-analysis.yml?branch=main" alt="Pipeline Status" />
+  <img src="https://img.shields.io/github/actions/workflow/status/BHouwens/Nation/codeql-analysis.yml?branch=main" alt="Pipeline Status" />
     <img src="https://img.shields.io/github/package-json/v/Zenotta/Intercom" />
   </div>
 
